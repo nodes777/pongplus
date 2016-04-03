@@ -25,6 +25,8 @@ var update = function() {
 	player.update();
 	/*When updating the ball use the paddles to check for collision*/
 	ball.update(player.paddle, computer.paddle);
+	/*Have the computer react to the ball*/
+	computer.update(ball);
 };
 
 var render = function() {
@@ -94,6 +96,23 @@ Player.prototype.update = function(){
 
 Computer.prototype.render = function(){
 	this.paddle.render();
+};
+
+Computer.prototype.update = function(ball){
+	var x_pos = ball.x;
+	var diff = -((this.paddle.x +(this.paddle.width / 2)) - x_pos);//Half of the paddle width plus the paddle x position minus the ball x position
+	if(diff < 0 && diff < -4) { // max speed left
+    diff = -5;
+  } else if(diff > 0 && diff > 4) { // max speed right
+    diff = 5;
+  }
+
+  this.paddle.move(diff, 0);
+  if(this.paddle.x < 0) {
+    this.paddle.x = 0;//left wall
+  } else if (this.paddle.x + this.paddle.width > 400) {
+    this.paddle.x = 400 - this.paddle.width;//right wall
+  }
 };
 /* Create Ball Class*/
 function Ball(x, y){
