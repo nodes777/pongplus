@@ -30,7 +30,7 @@ var update = function() {
 };
 
 var render = function() {
-  context.fillStyle = "#FF00FF";
+  context.fillStyle = "tan";
   context.fillRect(0, 0, width, height);
   	player.render();
 	computer.render();
@@ -149,6 +149,14 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
   }
 
   if(this.y < 0 || this.y > 600) { // a point was scored
+  	if(this.y < 0 ){
+    	game.compScore += 1;
+    } else
+    if(this.y > 600 ){
+    	game.playerScore += 1;
+    }
+    console.log(game.playerScore);
+    console.log(game.compScore);
     this.x_speed = 0;
     this.y_speed = 3;
     this.x = 200;
@@ -185,3 +193,9 @@ window.addEventListener("keydown", function(event){
 window.addEventListener("keyup", function(event){
 	delete keysDown[event.keyCode];
 });
+
+
+var game = {
+	compScore : 0,
+	playerScore : 0
+};
