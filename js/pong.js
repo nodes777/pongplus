@@ -1,7 +1,9 @@
 var animate = window.requestAnimationFrame ||
-window.webkitRequestAnimationFrame ||
-window.mozRequestAnimationFrame ||
-function(callback) { window.setTimeout(callback, 1000/60) };
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function(callback) {
+        window.setTimeout(callback, 1000 / 60)
+    };
 
 var canvas = document.createElement('canvas');
 var width = 400;
@@ -11,191 +13,226 @@ canvas.height = height;
 var context = canvas.getContext('2d');
 
 window.onload = function() {
-  document.getElementById("canvas").appendChild(canvas);
-  animate(step);
+    document.getElementById("canvas").appendChild(canvas);
+    animate(step);
 };
 
 var step = function() {
-  update();//Update positions
-  render();//Draw them on the screen
-  animate(step);
+    update(); //Update positions
+    render(); //Draw them on the screen
+    animate(step);
 };
 
 var update = function() {
-	player.update();
-	/*When updating the ball use the paddles to check for collision*/
-	ball.update(player.paddle, computer.paddle);
-	/*Have the computer react to the ball*/
-	computer.update(ball);
+    player.update();
+    /*When updating the ball use the paddles to check for collision*/
+    ball.update(player.paddle, computer.paddle);
+    /*Have the computer react to the ball*/
+    computer.update(ball);
 };
 
 var render = function() {
-  context.fillStyle = "tan";
-  context.fillRect(0, 0, width, height);
-  	player.render();
-	computer.render();
-	ball.render();
+    context.fillStyle = "tan";
+    context.fillRect(0, 0, width, height);
+    player.render();
+    computer.render();
+    ball.render();
 };
 /*Create Paddle Class*/
-function Paddle(x, y, width, height){
-	this.x = x;
-	this.y = y;
-	this.width = width;
-	this.height = height;
-	this.x_speed = 0;
-	this.y_speed = 0;
+function Paddle(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.x_speed = 0;
+    this.y_speed = 0;
 
 }
 /*Create Paddle methods that are shared across both players*/
-Paddle.prototype.render = function(){
-	context.fillStyle = "#0000FF";
-	context.fillRect(this.x, this.y, this.width, this.height);
+Paddle.prototype.render = function() {
+    context.fillStyle = "#0000FF";
+    context.fillRect(this.x, this.y, this.width, this.height);
 };
 
-Paddle.prototype.move = function(x, y){
-	this.x += x;//add x to position
-	this.y += y;
-	this.x_speed = x;//the speed is the value passed in Player.proto.update
-  	this.y_speed = y;
+Paddle.prototype.move = function(x, y) {
+    this.x += x; //add x to position
+    this.y += y;
+    this.x_speed = x; //the speed is the value passed in Player.proto.update
+    this.y_speed = y;
 
-  	if(this.x < 0) { // all the way to the left
-    this.x = 0;
-    this.x_speed = 0;
-  } else if (this.x + this.width > 400) { // all the way to the right
-    this.x = 400 - this.width;
-    this.x_speed = 0;
-  }
+    if (this.x < 0) { // all the way to the left
+        this.x = 0;
+        this.x_speed = 0;
+    } else if (this.x + this.width > 400) { // all the way to the right
+        this.x = 400 - this.width;
+        this.x_speed = 0;
+    }
 };
 
 /*Create Paddles player and comp*/
 
-function Player(){
-	this.paddle = new Paddle(175, 580, 50, 10);
+function Player() {
+    this.paddle = new Paddle(175, 580, 50, 10);
 }
 
-function Computer(){
-	this.paddle = new Paddle(175, 10, 50, 10);
+function Computer() {
+    this.paddle = new Paddle(175, 10, 50, 10);
 }
 
-Player.prototype.render = function(){
-	this.paddle.render();
+Player.prototype.render = function() {
+    this.paddle.render();
 };
 
-Player.prototype.update = function(){
-	for( var key in keysDown){
-		var value = Number(key);
-		if (value == 37 ){ //left arrow key
-			this.paddle.move(-4, 0);//to the left by 4 px
-		} else if (value == 39) { // right arrow
-      this.paddle.move(4, 0);//to the right by 4 px
-       	} else {
-      this.paddle.move(0, 0);
-    	}
-	}
+Player.prototype.update = function() {
+    for (var key in keysDown) {
+        var value = Number(key);
+        if (value == 37) { //left arrow key
+            this.paddle.move(-4, 0); //to the left by 4 px
+        } else if (value == 39) { // right arrow
+            this.paddle.move(4, 0); //to the right by 4 px
+        } else {
+            this.paddle.move(0, 0);
+        }
+    }
 };
 
-Computer.prototype.render = function(){
-	this.paddle.render();
+Computer.prototype.render = function() {
+    this.paddle.render();
 };
 
-Computer.prototype.update = function(ball){
-	var x_pos = ball.x;
-	var diff = -((this.paddle.x +(this.paddle.width / 2)) - x_pos);//Half of the paddle width plus the paddle x position minus the ball x position
-	if(diff < 0 && diff < -4) { // max speed left
-    diff = -5;
-  } else if(diff > 0 && diff > 4) { // max speed right
-    diff = 5;
-  }
+Computer.prototype.update = function(ball) {
+    var x_pos = ball.x;
+    var diff = -((this.paddle.x + (this.paddle.width / 2)) - x_pos); //Half of the paddle width plus the paddle x position minus the ball x position
+    if (diff < 0 && diff < -4) { // max speed left
+        diff = -5;
+    } else if (diff > 0 && diff > 4) { // max speed right
+        diff = 5;
+    }
 
-  this.paddle.move(diff, 0);
-  if(this.paddle.x < 0) {
-    this.paddle.x = 0;//left wall
-  } else if (this.paddle.x + this.paddle.width > 400) {
-    this.paddle.x = 400 - this.paddle.width;//right wall
-  }
+    this.paddle.move(diff, 0);
+    if (this.paddle.x < 0) {
+        this.paddle.x = 0; //left wall
+    } else if (this.paddle.x + this.paddle.width > 400) {
+        this.paddle.x = 400 - this.paddle.width; //right wall
+    }
 };
 /* Create Ball Class*/
-function Ball(x, y){
-	this.x = x;
-	this.y = y;
-	this.x_speed = 0;
-	this.y_speed = 3;
-	this.radius = 5;
+function Ball(x, y) {
+    this.x = x;
+    this.y = y;
+    this.x_speed = 0;
+    this.y_speed = 3;
+    this.radius = 5;
 }
 /* Create Ball methods*/
-Ball.prototype.render = function(){
-	/*Put "pen" down on canvas*/
-	context.beginPath();
-	/*Draw an arc starting at the x and y, using the radius, and the angle in radians, Counter Clockwise is false*/
-	context.arc(this.x, this.y, this.radius, 2 * Math.PI, false);
-	context.fillStyle = "#000000";
-  	context.fill();
+Ball.prototype.render = function() {
+    /*Put "pen" down on canvas*/
+    context.beginPath();
+    /*Draw an arc starting at the x and y, using the radius, and the angle in radians, Counter Clockwise is false*/
+    context.arc(this.x, this.y, this.radius, 2 * Math.PI, false);
+    context.fillStyle = "#000000";
+    context.fill();
 };
 
 Ball.prototype.update = function(playerPaddle, computerPaddle) {
-  this.x += this.x_speed;
-  this.y += this.y_speed;
-  var leftSide = this.x - 5;//left side of ball
-  var top_y = this.y - 5;//top of ball
-  var rightSide = this.x + 5;//right side of ball
-  var bottom_y = this.y + 5;//bottom of ball
+    this.x += this.x_speed;
+    this.y += this.y_speed;
+    var leftSide = this.x - 5; //left side of ball
+    var top_y = this.y - 5; //top of ball
+    var rightSide = this.x + 5; //right side of ball
+    var bottom_y = this.y + 5; //bottom of ball
 
-  if(leftSide < 0) { // hitting the left wall
-    this.x = 5;
-    this.x_speed = -this.x_speed;
-  } else if(rightSide > 400) { // hitting the right wall
-    this.x = 395;
-    this.x_speed = -this.x_speed;
-  }
+    if (leftSide < 0) { // hitting the left wall
+        this.x = 5;
+        this.x_speed = -this.x_speed;
+    } else if (rightSide > 400) { // hitting the right wall
+        this.x = 395;
+        this.x_speed = -this.x_speed;
+    }
 
-  if(this.y < 0 || this.y > 600) { // a point was scored
-  	if(this.y < 0 ){
-    	game.compScore += 1;
-    } else
-    if(this.y > 600 ){
-    	game.playerScore += 1;
+    if (this.y < 0 || this.y > 600) { // a point was scored
+        if (this.y < 0) {
+        	var playerScore = octo.getPlayerScore();
+            playerScore += 1;
+            octo.updatePlayerScore(playerScore);
+        } else
+        if (this.y > 600) {
+        	var compScore = octo.getCompScore();
+            compScore += 1;
+            octo.updateCompScore(compScore);
+        }
+        this.x_speed = 0;
+        this.y_speed = 3;
+        this.x = 200;
+        this.y = 300;
     }
-    console.log(game.playerScore);
-    console.log(game.compScore);
-    this.x_speed = 0;
-    this.y_speed = 3;
-    this.x = 200;
-    this.y = 300;
-  }
 
-  if(top_y > 300) {//why is this here?
-    if(top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
-      // hit the player's paddle
-      this.y_speed = -3;
-      this.x_speed += (playerPaddle.x_speed / 2);
-      this.y += this.y_speed;
+    if (top_y > 300) { //why is this here?
+        if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
+            // hit the player's paddle
+            this.y_speed = -3;
+            this.x_speed += (playerPaddle.x_speed / 2);
+            this.y += this.y_speed;
+        }
+    } else {
+        if (top_y < (computerPaddle.y + computerPaddle.height) && bottom_y > computerPaddle.y && leftSide < (computerPaddle.x + computerPaddle.width) && rightSide > computerPaddle.x) {
+            // hit the computer's paddle
+            this.y_speed = 3;
+            this.x_speed += (computerPaddle.x_speed / 2);
+            this.y += this.y_speed;
+        }
     }
-  } else {
-    if(top_y < (computerPaddle.y + computerPaddle.height) && bottom_y > computerPaddle.y && leftSide < (computerPaddle.x + computerPaddle.width) && rightSide > computerPaddle.x) {
-      // hit the computer's paddle
-      this.y_speed = 3;
-      this.x_speed += (computerPaddle.x_speed / 2);
-      this.y += this.y_speed;
-    }
-  }
 };
 
 var player = new Player();
 var computer = new Computer();
-var ball = new Ball (200, 300);
+var ball = new Ball(200, 300);
 
 var keysDown = {};
 
-window.addEventListener("keydown", function(event){
-	keysDown[event.keyCode] = true;
+window.addEventListener("keydown", function(event) {
+    keysDown[event.keyCode] = true;
 });
 
-window.addEventListener("keyup", function(event){
-	delete keysDown[event.keyCode];
+window.addEventListener("keyup", function(event) {
+    delete keysDown[event.keyCode];
 });
 
+/*Octo*/
+var octo = {
 
-var game = {
-	compScore : 0,
-	playerScore : 0
-};
+	getCompScore: function () {
+		return data.game.compScore;
+	},
+	getPlayerScore: function () {
+		return data.game.playerScore;
+	},
+	updateCompScore: function (score) {
+		data.game.compScore = score;
+	    console.log("comp score " + data.game.compScore);
+	    view.renderScore();
+	},
+	updatePlayerScore: function (score) {
+		data.game.playerScore = score;
+	    console.log("player score " + data.game.playerScore);
+	    view.renderScore();
+
+	}
+}
+
+/*Data*/
+var data = {
+	game: {
+	    compScore: 0,
+	    playerScore: 0
+	}
+}
+
+/*View*/
+var view = {
+
+	renderScore: function(){
+		document.getElementById("cScore").innerHTML= octo.getCompScore();
+		document.getElementById("pScore").innerHTML = octo.getPlayerScore();
+	}
+}
