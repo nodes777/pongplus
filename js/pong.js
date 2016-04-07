@@ -90,6 +90,10 @@ Player.prototype.update = function() {
             this.paddle.move(-4, 0); //to the left by 4 px
         } else if (value == 39) { // right arrow
             this.paddle.move(4, 0); //to the right by 4 px
+        } else if (value == 38) { // up
+            this.paddle.move(0, -4);
+        } else if (value == 40) {
+            this.paddle.move(0, 4);
         } else {
             this.paddle.move(0, 0);
         }
