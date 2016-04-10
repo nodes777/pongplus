@@ -12,6 +12,12 @@ canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
 
+context.setLineDash([5, 15]);
+context.beginPath();
+context.moveTo(0,100);
+context.lineTo(400, 100);
+context.stroke();
+
 window.onload = function() {
     document.getElementById("canvas").appendChild(canvas);
     animate(step);
@@ -20,7 +26,7 @@ window.onload = function() {
 var step = function() {
     update(); //Update positions
     render(); //Draw them on the screen
-    animate(step);
+    animate(step);//repeat
 };
 
 var update = function() {
@@ -46,7 +52,7 @@ function Paddle(x, y, width, height) {
     this.height = height;
     this.x_speed = 0;
     this.y_speed = 0;
-
+    this.powerUp = false;
 }
 /*Create Paddle methods that are shared across both players*/
 Paddle.prototype.render = function() {
@@ -90,13 +96,19 @@ Player.prototype.update = function() {
             this.paddle.move(-4, 0); //to the left by 4 px
         } else if (value == 39) { // right arrow
             this.paddle.move(4, 0); //to the right by 4 px
-        } else if (value == 38) { // up
-            this.paddle.move(0, -4);
-        } else if (value == 40) {
-            this.paddle.move(0, 4);
+        //} else if (value == 38) { // up
+        //    this.paddle.move(0, -4);
+        //} else if (value == 40) {
+         //   this.paddle.move(0, 4);
         } else {
-            this.paddle.move(0, 0);
+           this.paddle.move(0, 0);
         }
+    }
+    if (this.powerUp == false){
+    	this.paddle.width = this.paddle.width;
+    }
+    else if (this.powerUp == true) {
+    	this.paddle.width = 100;
     }
 };
 
@@ -121,7 +133,7 @@ Computer.prototype.update = function(ball) {
     }
 };
 /* Create Ball Class*/
-function Ball(x, y) {
+function Ball(x, y, x_speed) {
     this.x = x;
     this.y = y;
     this.x_speed = 0;
@@ -189,6 +201,7 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
 };
 
 var player = new Player();
+player.powerUp = false;
 var computer = new Computer();
 var ball = new Ball(200, 300);
 
