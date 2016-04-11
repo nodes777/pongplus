@@ -11,10 +11,13 @@ var height = 600;
 canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
-
-
-var startTime = Date.now();
-
+var drawMidLine = function(){
+	context.setLineDash([5, 10]);
+	context.beginPath();
+	context.moveTo(0,300);
+	context.lineTo(400, 300);
+	context.stroke();
+}
 
 window.onload = function() {
     document.getElementById("canvas").appendChild(canvas);
@@ -33,22 +36,19 @@ var update = function() {
     ball.update(player.paddle, computer.paddle);
     /*Have the computer react to the ball*/
     computer.update(ball);
-
+    /*Have the powerUp react to player*/
     powerUp.powerUpUpdate(player.paddle);
 
     var d = new Date();
 	var seconds = d.getSeconds();
-	console.log(seconds);
+
 };
 
 var render = function() {
     context.fillStyle = "tan";
     context.fillRect(0, 0, width, height);
-    context.setLineDash([5, 10]);
-	context.beginPath();
-	context.moveTo(0,300);
-	context.lineTo(400, 300);
-	context.stroke();
+    /*Draw dashed line*/
+    drawMidLine();
 
     player.render();
     computer.render();
@@ -225,19 +225,44 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
         }
     }
 };
+/* Create powerUp Class*/
+function PowerUp(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.x_speed = 0;
+    this.y_speed = 3;
+    dArrow = new Image();
+  	dArrow.src = 'img/arrow.png';
+}
 
-
-
+PowerUp.prototype.powerUpUpdate = function (playerPaddle){
+	this.x += this.x_speed;
+    this.y += this.y_speed;
+    var leftSide = this.x - 5; //left side of arrow
+    var top_y = this.y - 5; //top of arrow
+    var rightSide = this.x + 40; //right side of arrow
+    var bottom_y = this.y + 10; //bottom of arrow
+    if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
+            // hit the player's paddle
+            console.log("hit");
+            //power up should disappear
+            player.powerUpped = true;//how to make this extendable?? Use octo?
+        }
+}
+PowerUp.prototype.render = function(){
+	context.drawImage(dArrow, this.x, this.y);
+}
 var player = new Player();
 
 var computer = new Computer();
 
+var ball = new Ball(200, 300);
+
 if (update.seconds == 20||40||60){
-	var ball = new Ball(200, 300);
+	var powerUp = new PowerUp(100, 50, 40, 10);
 }
-
-var powerUp = new Ball(100, 50);
-
 var keysDown = {};
 
 window.addEventListener("keydown", function(event) {
@@ -249,23 +274,7 @@ window.addEventListener("keyup", function(event) {
 });
 
 /*Create powerUp differences*/
-powerUp.properties = function (){
-	this.context.fillStyle = "blue";
-}
-powerUp.powerUpUpdate = function (playerPaddle){
-	this.x += this.x_speed;
-    this.y += this.y_speed;
-    var leftSide = this.x - 5; //left side of ball
-    var top_y = this.y - 5; //top of ball
-    var rightSide = this.x + 5; //right side of ball
-    var bottom_y = this.y + 5; //bottom of ball
-    if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
-            // hit the player's paddle
-            console.log("hit");
-            //power up should disappear
-            player.powerUpped = true;//how to make this extendable?? Use octo?
-        }
-}
+
 /*Octo*/
 var octo = {
 
