@@ -12,11 +12,9 @@ canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
 
-context.setLineDash([5, 15]);
-context.beginPath();
-context.moveTo(0,100);
-context.lineTo(400, 100);
-context.stroke();
+
+var startTime = Date.now();
+
 
 window.onload = function() {
     document.getElementById("canvas").appendChild(canvas);
@@ -37,11 +35,21 @@ var update = function() {
     computer.update(ball);
 
     powerUp.powerUpUpdate(player.paddle);
+
+    var d = new Date();
+	var seconds = d.getSeconds();
+	console.log(seconds);
 };
 
 var render = function() {
     context.fillStyle = "tan";
     context.fillRect(0, 0, width, height);
+    context.setLineDash([5, 10]);
+	context.beginPath();
+	context.moveTo(0,300);
+	context.lineTo(400, 300);
+	context.stroke();
+
     player.render();
     computer.render();
     ball.render();
@@ -126,7 +134,7 @@ Player.prototype.update = function() {
     	/*Return paddle to normal size after 10 secs*/
     	window.setTimeout(function(){
     		player.powerUpped = false;
-    	}, 1000);
+    	}, 10000);
     }
 };
 
@@ -224,7 +232,9 @@ var player = new Player();
 
 var computer = new Computer();
 
-var ball = new Ball(200, 300);
+if (update.seconds == 20||40||60){
+	var ball = new Ball(200, 300);
+}
 
 var powerUp = new Ball(100, 50);
 
