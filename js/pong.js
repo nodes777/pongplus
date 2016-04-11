@@ -35,6 +35,8 @@ var update = function() {
     ball.update(player.paddle, computer.paddle);
     /*Have the computer react to the ball*/
     computer.update(ball);
+
+    powerUp.powerUpUpdate(player.paddle);
 };
 
 var render = function() {
@@ -43,6 +45,7 @@ var render = function() {
     player.render();
     computer.render();
     ball.render();
+    powerUp.render();
 };
 /*Create Paddle Class*/
 function Paddle(x, y, width, height) {
@@ -52,7 +55,7 @@ function Paddle(x, y, width, height) {
     this.height = height;
     this.x_speed = 0;
     this.y_speed = 0;
-    this.powerUp = false;
+    this.powerUpped = false;
 }
 /*Create Paddle methods that are shared across both players*/
 Paddle.prototype.render = function() {
@@ -90,6 +93,7 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function() {
+	var self = this;
     for (var key in keysDown) {
         var value = Number(key);
         if (value == 37) { //left arrow key
@@ -104,11 +108,25 @@ Player.prototype.update = function() {
            this.paddle.move(0, 0);
         }
     }
-    if (this.powerUp == false){
-    	this.paddle.width = this.paddle.width;
+    /*powerUp code, this keeps running every animation, it doesn't have to? It does to grow paddle*/
+    if (this.powerUpped == false){
+    	if(player.paddle.width > 50){
+    			player.paddle.width -= 1;
+   	 		}else{
+   	 			player.paddle.width = 50;
+   	 		}
     }
-    else if (this.powerUp == true) {
-    	this.paddle.width = 100;
+    else if (this.powerUpped == true) {
+    	/*Grows paddle over frames*/
+    	if(this.paddle.width < 100){
+    		this.paddle.width += 1;
+   	 	}else{
+   	 		this.paddle.width = 100;
+   	 	}
+    	/*Return paddle to normal size after 10 secs*/
+    	window.setTimeout(function(){
+    		player.powerUpped = false;
+    	}, 1000);
     }
 };
 
@@ -133,7 +151,7 @@ Computer.prototype.update = function(ball) {
     }
 };
 /* Create Ball Class*/
-function Ball(x, y, x_speed) {
+function Ball(x, y) {
     this.x = x;
     this.y = y;
     this.x_speed = 0;
@@ -200,10 +218,15 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
     }
 };
 
+
+
 var player = new Player();
-player.powerUp = false;
+
 var computer = new Computer();
+
 var ball = new Ball(200, 300);
+
+var powerUp = new Ball(100, 50);
 
 var keysDown = {};
 
@@ -215,6 +238,24 @@ window.addEventListener("keyup", function(event) {
     delete keysDown[event.keyCode];
 });
 
+/*Create powerUp differences*/
+powerUp.properties = function (){
+	this.context.fillStyle = "blue";
+}
+powerUp.powerUpUpdate = function (playerPaddle){
+	this.x += this.x_speed;
+    this.y += this.y_speed;
+    var leftSide = this.x - 5; //left side of ball
+    var top_y = this.y - 5; //top of ball
+    var rightSide = this.x + 5; //right side of ball
+    var bottom_y = this.y + 5; //bottom of ball
+    if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
+            // hit the player's paddle
+            console.log("hit");
+            //power up should disappear
+            player.powerUpped = true;//how to make this extendable?? Use octo?
+        }
+}
 /*Octo*/
 var octo = {
 
@@ -226,12 +267,10 @@ var octo = {
 	},
 	updateCompScore: function (score) {
 		data.game.compScore = score;
-	    console.log("comp score " + data.game.compScore);
 	    view.renderScore();
 	},
 	updatePlayerScore: function (score) {
 		data.game.playerScore = score;
-	    console.log("player score " + data.game.playerScore);
 	    view.renderScore();
 
 	}
