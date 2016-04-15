@@ -11,12 +11,12 @@ var height = 600;
 canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
-var drawMidLine = function(){
-	context.setLineDash([5, 10]);
-	context.beginPath();
-	context.moveTo(0,300);
-	context.lineTo(400, 300);
-	context.stroke();
+var drawMidLine = function() {
+    context.setLineDash([5, 10]);
+    context.beginPath();
+    context.moveTo(0, 300);
+    context.lineTo(400, 300);
+    context.stroke();
 }
 
 window.onload = function() {
@@ -27,7 +27,7 @@ window.onload = function() {
 var step = function() {
     update(); //Update positions
     render(); //Draw them on the screen
-    animate(step);//repeat
+    animate(step); //repeat
 };
 
 var update = function() {
@@ -37,10 +37,13 @@ var update = function() {
     /*Have the computer react to the ball*/
     computer.update(ball);
     /*Have the powerUp react to player*/
-    powerUp.powerUpUpdate(player.paddle);
+    for(i = 0; i<powerUps.length; i++){
+    	powerUps[i].powerUpUpdate(player.paddle);
+    }
+    //powerUp.powerUpUpdate(player.paddle);
 
     var d = new Date();
-	var seconds = d.getSeconds();
+    var seconds = d.getSeconds();
 
 };
 
@@ -53,7 +56,9 @@ var render = function() {
     player.render();
     computer.render();
     ball.render();
-    powerUp.render();
+    for(i = 0; i<powerUps.length; i++){
+    	powerUps[i].render();
+    }
 };
 /*Create Paddle Class*/
 function Paddle(x, y, width, height) {
@@ -101,40 +106,39 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function() {
-	var self = this;
+    var self = this;
     for (var key in keysDown) {
         var value = Number(key);
         if (value == 37) { //left arrow key
             this.paddle.move(-4, 0); //to the left by 4 px
         } else if (value == 39) { // right arrow
             this.paddle.move(4, 0); //to the right by 4 px
-        //} else if (value == 38) { // up
-        //    this.paddle.move(0, -4);
-        //} else if (value == 40) {
-         //   this.paddle.move(0, 4);
+            //} else if (value == 38) { // up
+            //    this.paddle.move(0, -4);
+            //} else if (value == 40) {
+            //   this.paddle.move(0, 4);
         } else {
-           this.paddle.move(0, 0);
+            this.paddle.move(0, 0);
         }
     }
     /*powerUp code, this keeps running every animation, it doesn't have to? It does to grow paddle*/
-    if (this.powerUpped == false){
-    	if(player.paddle.width > 50){
-    			player.paddle.width -= 1;
-   	 		}else{
-   	 			player.paddle.width = 50;
-   	 		}
-    }
-    else if (this.powerUpped == true) {
-    	/*Grows paddle over frames*/
-    	if(this.paddle.width < 100){
-    		this.paddle.width += 1;
-   	 	}else{
-   	 		this.paddle.width = 100;
-   	 	}
-    	/*Return paddle to normal size after 10 secs*/
-    	window.setTimeout(function(){
-    		player.powerUpped = false;
-    	}, 10000);
+    if (this.powerUpped == false) {
+        if (player.paddle.width > 50) {
+            player.paddle.width -= 1;
+        } else {
+            player.paddle.width = 50;
+        }
+    } else if (this.powerUpped == true) {
+        /*Grows paddle over frames*/
+        if (this.paddle.width < 100) {
+            this.paddle.width += 1;
+        } else {
+            this.paddle.width = 100;
+        }
+        /*Return paddle to normal size after 10 secs*/
+        window.setTimeout(function() {
+            player.powerUpped = false;
+        }, 10000);
     }
 };
 
@@ -194,12 +198,12 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
 
     if (this.y < 0 || this.y > 600) { // a point was scored
         if (this.y < 0) {
-        	var playerScore = octo.getPlayerScore();
+            var playerScore = octo.getPlayerScore();
             playerScore += 1;
             octo.updatePlayerScore(playerScore);
         } else
         if (this.y > 600) {
-        	var compScore = octo.getCompScore();
+            var compScore = octo.getCompScore();
             compScore += 1;
             octo.updateCompScore(compScore);
         }
@@ -225,6 +229,7 @@ Ball.prototype.update = function(playerPaddle, computerPaddle) {
         }
     }
 };
+
 /* Create powerUp Class*/
 function PowerUp(x, y, width, height) {
     this.x = x;
@@ -234,25 +239,30 @@ function PowerUp(x, y, width, height) {
     this.x_speed = 0;
     this.y_speed = 3;
     dArrow = new Image();
-  	dArrow.src = 'img/arrow.png';
+    dArrow.src = 'img/arrow.png';
 }
 
-PowerUp.prototype.powerUpUpdate = function (playerPaddle){
-	this.x += this.x_speed;
+PowerUp.prototype.powerUpUpdate = function(playerPaddle) {
+    this.x += this.x_speed;
     this.y += this.y_speed;
     var leftSide = this.x - 5; //left side of arrow
     var top_y = this.y - 5; //top of arrow
     var rightSide = this.x + 40; //right side of arrow
     var bottom_y = this.y + 10; //bottom of arrow
     if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
-            // hit the player's paddle
-            console.log("hit");
-            //power up should disappear
-            player.powerUpped = true;//how to make this extendable?? Use octo?
-        }
+        // hit the player's paddle
+        console.log("hit");
+        powerUps.splice(0, 1);
+        //power up should disappear
+        player.powerUpped = true; //how to make this extendable?? Use octo?
+    }
 }
-PowerUp.prototype.render = function(){
-	context.drawImage(dArrow, this.x, this.y);
+PowerUp.prototype.render = function() {
+    context.drawImage(dArrow, this.x, this.y);
+}
+function spawnPowerUp(){
+	var powerUp = new PowerUp(100, 50, 40, 10);
+	powerUps.push(powerUp);
 }
 var player = new Player();
 
@@ -260,8 +270,10 @@ var computer = new Computer();
 
 var ball = new Ball(200, 300);
 
-if (update.seconds == 20||40||60){
-	var powerUp = new PowerUp(100, 50, 40, 10);
+var powerUps = [];
+
+if (update.seconds == 20 || 40 || 60) {
+	spawnPowerUp();
 }
 var keysDown = {};
 
@@ -278,36 +290,35 @@ window.addEventListener("keyup", function(event) {
 /*Octo*/
 var octo = {
 
-	getCompScore: function () {
-		return data.game.compScore;
-	},
-	getPlayerScore: function () {
-		return data.game.playerScore;
-	},
-	updateCompScore: function (score) {
-		data.game.compScore = score;
-	    view.renderScore();
-	},
-	updatePlayerScore: function (score) {
-		data.game.playerScore = score;
-	    view.renderScore();
+    getCompScore: function() {
+        return data.game.compScore;
+    },
+    getPlayerScore: function() {
+        return data.game.playerScore;
+    },
+    updateCompScore: function(score) {
+        data.game.compScore = score;
+        view.renderScore();
+    },
+    updatePlayerScore: function(score) {
+        data.game.playerScore = score;
+        view.renderScore();
 
-	}
+    }
 }
 
 /*Data*/
 var data = {
-	game: {
-	    compScore: 0,
-	    playerScore: 0
-	}
+    game: {
+        compScore: 0,
+        playerScore: 0
+    }
 }
 
 /*View*/
 var view = {
-
-	renderScore: function(){
-		document.getElementById("cScore").innerHTML= octo.getCompScore();
-		document.getElementById("pScore").innerHTML = octo.getPlayerScore();
-	}
+    renderScore: function() {
+        document.getElementById("cScore").innerHTML = octo.getCompScore();
+        document.getElementById("pScore").innerHTML = octo.getPlayerScore();
+    }
 }
