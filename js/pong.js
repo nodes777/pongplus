@@ -17,7 +17,7 @@ var drawMidLine = function() {
     context.moveTo(0, 300);
     context.lineTo(400, 300);
     context.stroke();
-}
+};
 
 window.onload = function() {
     document.getElementById("canvas").appendChild(canvas);
@@ -37,12 +37,12 @@ var update = function() {
     /*Have the computer react to the ball*/
     computer.update(ball);
     /*Have the powerUp react to player*/
-    for(i = 0; i<powerUps.length; i++){
-    	powerUps[i].powerUpUpdate(player.paddle);
+    for (i = 0; i < powerUps.length; i++) {
+        powerUps[i].powerUpUpdate(player.paddle);
     }
     //powerUp.powerUpUpdate(player.paddle);
 
-	var timeInMs = Date.now();
+    var timeInMs = Date.now();
     console.log(timeInMs);
 
     checkForPowerUp(timeInMs);
@@ -58,8 +58,8 @@ var render = function() {
     player.render();
     computer.render();
     ball.render();
-    for(i = 0; i<powerUps.length; i++){
-    	powerUps[i].render();
+    for (i = 0; i < powerUps.length; i++) {
+        powerUps[i].render();
     }
 };
 /*Create Paddle Class*/
@@ -109,7 +109,6 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.update = function() {
-    var self = this;
     for (var key in keysDown) {
         var value = Number(key);
         if (value == 37) { //left arrow key
@@ -125,13 +124,13 @@ Player.prototype.update = function() {
         }
     }
     /*powerUp code, this keeps running every animation, it doesn't have to? It does to grow paddle*/
-    if (this.powerUpped == false) {
+    if (this.powerUpped === false) {
         if (player.paddle.width > 50) {
             player.paddle.width -= 1;
         } else {
             player.paddle.width = 50;
         }
-    } else if (this.powerUpped == true) {
+    } else if (this.powerUpped === true) {
         /*Grows paddle over frames*/
         if (this.paddle.width < 100) {
             this.paddle.width += 1;
@@ -254,25 +253,26 @@ PowerUp.prototype.powerUpUpdate = function(playerPaddle) {
     var bottom_y = this.y + 10; //bottom of arrow
     if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
         // hit the player's paddle
-        powerUps.splice(0, 1);//power up disappears
+        powerUps.splice(0, 1); //power up disappears
         player.powerUpped = true; //how to make this extendable?? Use octo?
     }
-}
+};
 PowerUp.prototype.render = function() {
     context.drawImage(dArrow, this.x, this.y);
-}
+};
 
-function spawnPowerUp(){
-	var powerUp = new PowerUp(100, 50, 40, 10);
-	powerUps.push(powerUp);
+function spawnPowerUp() {
+    var powerUp = new PowerUp(Math.floor((Math.random() * 300) + 50), 50, 40, 10);
+    powerUps.push(powerUp);
 }
-var spawnRate = 20000; //every 20 seconds
+var spawnRate = 25000; //every 25 seconds
 var lastSpawn = -1;
-function checkForPowerUp(time){
-	if(time>(lastSpawn+spawnRate)){
-            lastSpawn=time;
-            spawnPowerUp();
-        }
+
+function checkForPowerUp(time) {
+    if (time > (lastSpawn + spawnRate)) {
+        lastSpawn = time;
+        spawnPowerUp();
+    }
 }
 
 var player = new Player();
@@ -314,7 +314,7 @@ var octo = {
         view.renderScore();
 
     }
-}
+};
 
 /*Data*/
 var data = {
@@ -322,7 +322,7 @@ var data = {
         compScore: 0,
         playerScore: 0
     }
-}
+};
 
 /*View*/
 var view = {
@@ -330,4 +330,4 @@ var view = {
         document.getElementById("cScore").innerHTML = octo.getCompScore();
         document.getElementById("pScore").innerHTML = octo.getPlayerScore();
     }
-}
+};
