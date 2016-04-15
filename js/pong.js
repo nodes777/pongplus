@@ -42,8 +42,10 @@ var update = function() {
     }
     //powerUp.powerUpUpdate(player.paddle);
 
-    var d = new Date();
-    var seconds = d.getSeconds();
+	var timeInMs = Date.now();
+    console.log(timeInMs);
+
+    checkForPowerUp(timeInMs);
 
 };
 
@@ -81,6 +83,7 @@ Paddle.prototype.move = function(x, y) {
     this.y += y;
     this.x_speed = x; //the speed is the value passed in Player.proto.update
     this.y_speed = y;
+
 
     if (this.x < 0) { // all the way to the left
         this.x = 0;
@@ -251,19 +254,27 @@ PowerUp.prototype.powerUpUpdate = function(playerPaddle) {
     var bottom_y = this.y + 10; //bottom of arrow
     if (top_y < (playerPaddle.y + playerPaddle.height) && bottom_y > playerPaddle.y && leftSide < (playerPaddle.x + playerPaddle.width) && rightSide > playerPaddle.x) {
         // hit the player's paddle
-        console.log("hit");
-        powerUps.splice(0, 1);
-        //power up should disappear
+        powerUps.splice(0, 1);//power up disappears
         player.powerUpped = true; //how to make this extendable?? Use octo?
     }
 }
 PowerUp.prototype.render = function() {
     context.drawImage(dArrow, this.x, this.y);
 }
+
 function spawnPowerUp(){
 	var powerUp = new PowerUp(100, 50, 40, 10);
 	powerUps.push(powerUp);
 }
+var spawnRate = 20000; //every 20 seconds
+var lastSpawn = -1;
+function checkForPowerUp(time){
+	if(time>(lastSpawn+spawnRate)){
+            lastSpawn=time;
+            spawnPowerUp();
+        }
+}
+
 var player = new Player();
 
 var computer = new Computer();
@@ -272,9 +283,7 @@ var ball = new Ball(200, 300);
 
 var powerUps = [];
 
-if (update.seconds == 20 || 40 || 60) {
-	spawnPowerUp();
-}
+
 var keysDown = {};
 
 window.addEventListener("keydown", function(event) {
