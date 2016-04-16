@@ -15,7 +15,7 @@ Pong Plus is a pong clone in javascript. You can play it at <a href="">taylornod
 *requestAnimationFrame
 
 ##To-Dos##
-*Text with digital font
 *Input Audio
-*Center Pong or reorganize page
 
+##Bugs##
+*Set timeout runs when window is minimized, but requestAnimationFrame does not. So if you click out and back in sometimes a powerup will spawn when one is already in canvas

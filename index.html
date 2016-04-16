@@ -1,50 +1,51 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Pong Clone">
+    <meta name="author" content="Taylor Nodell">
     <!--<link rel="icon" href="./favicon.ico">-->
     <title>Pong Plus</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-  </head>
+    <link href="css/main.css" rel="stylesheet">
+    <!-- Orbitron Font-->
+    <link href='https://fonts.googleapis.com/css?family=Orbitron:400,700,900' rel='stylesheet' type='text/css'>
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-6">
-          <h2>Heading</h2>
-          <div id="canvas"></div>
-        </div>
-        <div class="col-md-6">
-          <h2>Heading</h2>
-            <div>
-              <p></p>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="canvas" class="canvas"></div>
             </div>
-          <div class="row">
-            <div class="col-md-6" id="pScore">0</div>
-            <div class="col-md-6" id="cScore">0</div>
-          </div>
-       </div>
+            <div class="col-md-6">
+                <div>
+                    <p></p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 score" id="pScore">0</div>
+                    <div class="col-md-6 score" id="cScore">0</div>
+                </div>
+            </div>
 
-      </div><!--/row-->
-    </div> <!-- /container -->
+        </div>
+    </div>
 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-      <!--<script src="js/ang.js"></script>-->
     <script src="js/pong.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script>
+        window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')
+    </script>
     <script src="js/bootstrap.min.js"></script>
-  </body>
+</body>
+
 </html>
